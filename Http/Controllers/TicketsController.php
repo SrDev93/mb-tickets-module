@@ -19,7 +19,13 @@ class TicketsController extends Controller
      */
     public function index()
     {
-        $items = Ticket::latest()->get();
+        if (\request()->session()->has('brand_id')){
+            $items = Ticket::latest()->where('brand_id', \request()->session()->get('brand_id'))->get();
+        }elseif (Auth::user()->brand_id) {
+            $items = Ticket::latest()->where('brand_id', Auth::user()->brand_id)->get();
+        }else {
+            $items = Ticket::latest()->get();
+        }
 
         return view('tickets::index', compact('items'));
     }
